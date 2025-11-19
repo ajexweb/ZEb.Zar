@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zeb Zar - Free Fire Max Tournament</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  html, body {
+    height: 100%;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  body {
+    background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* ======== ZEB ZAR TOP TITLE ======== */
+  .zebzar-title {
+    text-align: center;
+    padding: 25px 15px 15px;
+    background: linear-gradient(135deg, #00bcd4, #00796b);
+    color: white;
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    text-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    box-shadow: 0 10px 30px rgba(0, 188, 212, 0.5);
+    border-bottom-left-radius: 35px;
+    border-bottom-right-radius: 35px;
+  }
+  .zebzar-title span {
+    display: block;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 5px;
+    margin-top: 8px;
+    opacity: 0.95;
+  }
+
+  .main-content {
+    flex: 1;
+    padding: 20px;
+    padding-bottom: 80px;
+  }
+
+  .card {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    max-width: 500px;
+    margin: 30px auto;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    animation: fadeIn 0.8s ease-out;
+  }
+
+  h1 {
+    color: #00bcd4;
+    font-size: 32px;
+    margin: 10px 0;
+    font-weight: 700;
+    text-shadow: 0 2px 10px rgba(0, 188, 212, 0.2);
+  }
+
+  p { margin: 12px 0; font-size: 18px; color: #444; }
+
+  /* Default Button Style (Blue/Cyan Gradient) - Used for JOIN/REPORT/DASHBOARD/SHARE */
+  button {
+    background: linear-gradient(45deg, #00bcd4, #0097a7);
+    color: white;
+    padding: 16px 40px;
+    border: none;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 12px 8px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0, 188, 212, 0.3);
+    transition: all 0.3s ease;
+  }
+  button:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 188, 212, 0.4);
+  }
+  /* Overriding old yellow/purple classes to use the default blue/cyan style */
+  button.yellow, button.purple { 
+    background: linear-gradient(45deg, #00bcd4, #0097a7);
+    color: white;
+    box-shadow: 0 6px 20px rgba(0, 188, 212, 0.3);
+  }
+  
+  /* Red Button Style (Used for Close/Reject only) */
+  button.red { 
+    background: linear-gradient(45deg, #ff5252, #d32f2f);
+    box-shadow: 0 6px 20px rgba(255, 82, 82, 0.3);
+  }
+
+  input {
+    width: 90%;
+    max-width: 400px;
+    padding: 18px;
+    margin: 15px auto;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 2px solid #00bcd4;
+    font-size: 18px;
+    color: #333;
+    display: block;
+    transition: all 0.3s;
+  }
+  input:focus {
+    outline: none;
+    border-color: #0097a7;
+    box-shadow: 0 0 15px rgba(0, 188, 212, 0.4);
+    background: white;
+  }
+
+  .popup {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+  .box {
+    background: white;
+    padding: 35px;
+    border-radius: 24px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 50px rgba(0, 188, 212, 0.3);
+    border: 2px solid #00bcd4;
+    animation: slideUp 0.5s ease-out;
+  }
+
+  /* Notification Button Style - Changed to Blue/Cyan Gradient */
+  #notiBtn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(45deg, #00bcd4, #0097a7); /* Changed color */
+    color: white; /* Changed text color */
+    padding: 14px 18px;
+    border-radius: 50%;
+    font-size: 26px;
+    font-weight: bold;
+    box-shadow: 0 8px 20px rgba(0, 188, 212, 0.4); /* Changed shadow color */
+    z-index: 9999;
+    cursor: pointer;
+    animation: pulse 2s infinite;
+  }
+
+  #joinedCount {
+    font-size: 42px;
+    color: #00bcd4;
+    font-weight: 700;
+    text-shadow: 0 2px 10px rgba(0, 188, 212, 0.2);
+  }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  /* Pulse animation color changed to reflect new button color */
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 188, 212, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(0, 188, 212, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 188, 212, 0); }
+  }
+
+  .hidden { display: none; }
+  img { border-radius: 16px; margin: 20px 0; width: 100%; max-width: 450px; }
+  h2 { color: #00bcd4; font-size: 26px; margin-bottom: 20px; }
+
+  footer {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 25px 20px;
+    text-align: center;
+    color: #006064;
+    font-size: 14px;
+    border-top: 1px solid rgba(0, 188, 212, 0.2);
+    margin-top: auto;
+  }
+  footer a {
+    color: #00bcd4;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+  <div id="notiBtn" onclick="window.location.href='usernoti.html'">🔔</div>
+
+  <div class="zebzar-title">
+    ZEB ZAR
+    <span>FREE FIRE MAX TOURNAMENT</span>
+  </div>
+
+  <div class="main-content">
+    <div class="card" id="mainCard">
+      <h1 id="tournamentName">Loading...</h1>
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLsYBc0dKNZJuHSV1iux5jJ7UzHn6cyTEApyt1-3HKeg&s=10" alt="Tournament Banner">
+      <p>Start: <span id="startTime">-</span></p>
+      <p>End: <span id="endTime">-</span></p>
+      <p><strong>Entry:</strong> ₹<span id="entryFee">00</span> | <strong>Prize:</strong> ₹<span id="prize">00</span></p>
+      <p><strong>Joined:</strong> <span id="joinedCount">0</span></p>
+      
+      <button id="joinBtn">JOIN / CHECK STATUS</button>
+      
+      <button onclick="window.location.href='userfeedback.html'">Report / Feedback</button>
+      <button onclick="window.location.href='desh.html'">User DASHBOARD</button>
+      
+      <button onclick="window.location.href='share.html'">SHARE / Invite 📨</button>
+      </div>
+  </div>
+
+  <div class="popup" id="uidCheckPage">
+    <div class="box">
+      <h2>Enter Your In-Game UID</h2>
+      <input type="text" id="checkUid" placeholder="5123456789">
+      <button id="checkBtn">CHECK</button>
+      <button class="red" onclick="closeAll()">Close</button>
+      <div id="uidResult" class="hidden" style="margin-top:20px;padding:20px;background:#e0f7fa;border-radius:16px;color:#006064;"></div>
+    </div>
+  </div>
+
+  <div class="popup" id="roomScreen">
+    <div class="box">
+      <h2 style="color:#00e676;">Successfully Joined!</h2>
+      <p><strong>Room ID:</strong> <span id="roomId" style="font-size:32px;color:#00bcd4;font-weight:bold;">---</span></p>
+      <p><strong>Password:</strong> <span id="roomPass" style="font-size:32px;color:#00bcd4;font-weight:bold;">---</span></p>
+      <button onclick="closeAll()">Back to Home</button>
+    </div>
+  </div>
+
+  <div class="popup" id="paymentPage">
+    <div class="box">
+      <h2>Pay ₹<span id="paymentFee">199</span></h2>
+      <img src="adminqr.png" alt="Payment QR">
+      <input type="text" id="payUid" placeholder="Your In-Game UID">
+      <input type="text" id="payUtr" placeholder="12-digit UTR Number">
+      <button id="submitPayment">I Have Paid</button>
+      <button class="red" onclick="closeAll()">Close</button>
+    </div>
+  </div>
+
+  <footer>
+    <p><strong>Developer Instagram:</strong> <a href="https://instagram.com/ajexweb" target="_blank">Ajex Web</a></p>
+    <p><strong>Owner Instagram:</strong> <a href="https://instagram.com/zeb_zar_turnament" target="_blank">ZEB ZAR</a></p>
+    <br>
+    <p>© 2025 ZEB ZAR • All Rights Reserved</p>
+    <p>
+      <a href="privacypolicy.html" target="_blank">Privacy Policy</a> • 
+      <a href="terms.html" target="_blank">Terms & Conditions</a>
+    </p>
+  </footer>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAkcBlyH2QPPZtGN5t9eqYmuC_E9dGo4b0",
+  authDomain: "fir-bf6f1.firebaseapp.com",
+  databaseURL: "https://fir-bf6f1-default-rtdb.firebaseio.com",
+  projectId: "fir-bf6f1",
+  storageBucket: "fir-bf6f1.appspot.com",
+  messagingSenderId: "432545170995",
+  appId: "1:432545170995:web:b6deccf31b79eb6ef1c546"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// Live Joined Count
+db.ref("payments").on("value", s => {
+  let c = 0;
+  s.forEach(ch => { if(ch.val().status === "approved") c++; });
+  document.getElementById("joinedCount").textContent = c;
+});
+
+// Tournament Info
+db.ref("tournament").on("value", s => {
+  const t = s.val() || {active:true, name:"BGMI Tournament", entryFee:199, prize:10000};
+  document.getElementById("tournamentName").textContent = t.name || "BGMI Tournament";
+  document.getElementById("entryFee").textContent = t.entryFee || 199;
+  document.getElementById("prize").textContent = t.prize || 10000;
+  document.getElementById("paymentFee").textContent = t.entryFee || 199;
+  document.getElementById("startTime").textContent = t.startTime ? new Date(t.startTime).toLocaleString() : "Not Set";
+  document.getElementById("endTime").textContent = t.endTime ? new Date(t.endTime).toLocaleString() : "Not Set";
+});
+
+// Open UID Check
+document.getElementById("joinBtn").onclick = () => document.getElementById("uidCheckPage").style.display = "flex";
+
+function closeAll() {
+  document.querySelectorAll(".popup").forEach(p => p.style.display = "none");
+  document.getElementById("uidResult").classList.add("hidden");
+  document.getElementById("uidResult").innerHTML = "";
+}
+
+// Check UID
+document.getElementById("checkBtn").onclick = () => {
+  const uid = document.getElementById("checkUid").value.trim();
+  if(!uid) return alert("Enter UID");
+  db.ref("payments").orderByChild("uid").equalTo(uid).once("value").then(s => {
+    const div = document.getElementById("uidResult");
+    div.classList.remove("hidden");
+    if(s.exists()){
+      s.forEach(ch => {
+        const p = ch.val();
+        if(p.status === "approved"){
+          closeAll();
+          document.getElementById("roomScreen").style.display = "flex";
+          document.getElementById("roomId").textContent = p.roomId || "N/A";
+          document.getElementById("roomPass").textContent = p.roomPass || "N/A";
+        } else if(p.status === "pending"){
+          div.innerHTML = "<span style='color:#ff9800;font-weight:bold;'>Payment Pending – Wait for approval</span>";
+        } else {
+          div.innerHTML = "<span style='color:#f44336;'>Payment Rejected – Try again</span>";
+        }
+      });
+    } else {
+      div.innerHTML = `Not joined yet<br><button onclick="payNow('${uid}')" style="margin-top:15px;padding:14px 30px;">Pay & Join Now</button>`;
+    }
+  });
+};
+
+window.payNow = uid => {
+  closeAll();
+  document.getElementById("paymentPage").style.display = "flex";
+  document.getElementById("payUid").value = uid;
+};
+
+document.getElementById("submitPayment").onclick = () => {
+  const uid = document.getElementById("payUid").value.trim();
+  const utr = document.getElementById("payUtr").value.trim();
+  if(!uid || !utr || utr.length < 10) return alert("Fill all fields correctly");
+  db.ref("payments").push({uid, utr, status:"pending", requestedAt:Date.now()})
+    .then(() => { closeAll(); alert("Payment Submitted! Wait for approval"); });
+};
+</script>
+</body>
+  </html>
+  
