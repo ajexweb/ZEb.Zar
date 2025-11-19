@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>zeb zar - invite friends</title>
+<link href="https://fonts.googleapis.com/css2?family=poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  html, body {
+    height: 100%;
+    font-family: 'poppins', sans-serif;
+  }
+
+  body {
+    background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* ======== zeb zar top title ======== */
+  .zebzar-title {
+    text-align: center;
+    padding: 25px 15px 15px;
+    background: linear-gradient(135deg, #00bcd4, #00796b);
+    color: white;
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    text-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    box-shadow: 0 10px 30px rgba(0, 188, 212, 0.5);
+    border-bottom-left-radius: 35px;
+    border-bottom-right-radius: 35px;
+  }
+  .zebzar-title span {
+    display: block;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 5px;
+    margin-top: 8px;
+    opacity: 0.95;
+  }
+
+  .main-content {
+    flex: 1;
+    padding: 20px;
+    padding-bottom: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    max-width: 500px;
+    margin: 30px auto;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    animation: fadein 0.8s ease-out;
+  }
+
+  h1 {
+    color: #00bcd4;
+    font-size: 32px;
+    margin: 10px 0;
+    font-weight: 700;
+    text-shadow: 0 2px 10px rgba(0, 188, 212, 0.2);
+  }
+
+  p { margin: 12px 0; font-size: 18px; color: #444; }
+
+  /* default button style (blue/cyan gradient) */
+  button {
+    background: linear-gradient(45deg, #00bcd4, #0097a7);
+    color: white;
+    padding: 16px 40px;
+    border: none;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 12px 8px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0, 188, 212, 0.3);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  button:hover {
+    transform: translatey(-4px);
+    box-shadow: 0 10px 25px rgba(0, 188, 212, 0.4);
+  }
+  /* Specific social media button icons/colors if desired, though generic blue is fine */
+  .social-button {
+    background: linear-gradient(45deg, #00bcd4, #0097a7); /* Default to theme color */
+  }
+  .social-button.whatsapp {
+    background: linear-gradient(45deg, #25D366, #128C7E);
+  }
+  .social-button.facebook {
+    background: linear-gradient(45deg, #1877F2, #0A66C2);
+  }
+  .social-button.instagram {
+    background: linear-gradient(45deg, #C13584, #E1306C);
+  }
+  .social-button.copy {
+    background: linear-gradient(45deg, #607d8b, #455a64);
+  }
+
+  .social-button i {
+    font-size: 22px; /* For font awesome icons */
+  }
+
+  input[type="text"] {
+    width: 90%;
+    max-width: 400px;
+    padding: 18px;
+    margin: 15px auto;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 2px solid #00bcd4;
+    font-size: 18px;
+    color: #333;
+    display: block;
+    transition: all 0.3s;
+    text-align: center;
+  }
+  input[type="text"]:focus {
+    outline: none;
+    border-color: #0097a7;
+    box-shadow: 0 0 15px rgba(0, 188, 212, 0.4);
+    background: white;
+  }
+
+  keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+  keyframes slideup { from { transform: translatey(50px); opacity: 0; } to { transform: translatey(0); opacity: 1; } }
+  
+  footer {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 25px 20px;
+    text-align: center;
+    color: #006064;
+    font-size: 14px;
+    border-top: 1px solid rgba(0, 188, 212, 0.2);
+    margin-top: auto;
+  }
+  footer a {
+    color: #00bcd4;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  footer a:hover { text-decoration: underline; }
+
+  /* Font Awesome for social icons */
+  @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css");
+</style>
+</head>
+<body>
+
+  <div class="zebzar-title">
+    zeb zar
+    <span>invite your squad!</span>
+  </div>
+
+  <div class="main-content">
+    <div class="card">
+      <h1>invite friends to zeb zar</h1>
+      <p>share the excitement with your friends and join the ultimate Free Fire Max tournament!</p>
+      <p>the more players, the bigger the prize pool!</p>
+      
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:and9gcrlsybc0dknzjuhsv1iux5jj7uzhn6cyteapyt1-3hkeg&s=10" alt="invite banner" style="max-width: 300px;">
+
+      <button class="social-button whatsapp" onclick="shareWhatsApp()">
+        <i class="fab fa-whatsapp"></i> invite via whatsapp
+      </button>
+      <button class="social-button facebook" onclick="shareFacebook()">
+        <i class="fab fa-facebook-f"></i> invite via facebook
+      </button>
+      <button class="social-button instagram" onclick="shareInstagram()">
+        <i class="fab fa-instagram"></i> invite via instagram
+      </button>
+      <button class="social-button copy" onclick="copyLink()">
+        <i class="fas fa-link"></i> copy invite link
+      </button>
+      
+      <input type="text" id="inviteLink" value="https://zebzar.com/invite" readonly>
+    </div>
+  </div>
+
+  <footer>
+    <p><strong>developer instagram:</strong> <a href="https://instagram.com/ajexweb" target="_blank">ajex web</a></p>
+    <p><strong>owner instagram:</strong> <a href="https://instagram.com/zeb_zar_turnament" target="_blank">zeb zar</a></p>
+    <br>
+    <p>© 2025 zeb zar • all rights reserved</p>
+    <p>
+      <a href="privacypolicy.html" target="_blank">privacy policy</a> • 
+      <a href="terms.html" target="_blank">terms & conditions</a>
+    </p>
+  </footer>
+
+<script>
+  const tournamentLink = "https://zebzar.com"; // Replace with your actual tournament link
+  const inviteMessage = "Join the Zeb Zar Free Fire Max Tournament! 🔥 Compete for amazing prizes. Register now: " + tournamentLink;
+
+  function shareWhatsApp() {
+    window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(inviteMessage), "_blank");
+  }
+
+  function shareFacebook() {
+    window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(tournamentLink) + "&quote=" + encodeURIComponent(inviteMessage), "_blank");
+  }
+
+  function shareInstagram() {
+    // Instagram doesn't have a direct share API like WhatsApp/Facebook for posts/stories easily from web.
+    // The best approach is to prompt the user to copy the link.
+    alert("For Instagram, please copy the link and paste it into your story or bio: " + tournamentLink);
+    copyLink();
+  }
+
+  function copyLink() {
+    const inviteLinkInput = document.getElementById("inviteLink");
+    inviteLinkInput.select();
+    inviteLinkInput.setSelectionRange(0, 99999); // For mobile devices
+    document.execCommand("copy");
+    alert("Invite link copied to clipboard!");
+  }
+
+  // Set the actual invite link in the input field
+  document.getElementById("inviteLink").value = tournamentLink;
+</script>
+</body>
+</html>

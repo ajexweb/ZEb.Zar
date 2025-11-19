@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notifications</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{
+      font-family:'Poppins',sans-serif;
+      background:linear-gradient(135deg,#e0f7fa,#b2ebf2);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+    header{
+      background:linear-gradient(45deg,#00695c,#00897b,#00bfa5);
+      color:white;
+      padding:22px 20px;
+      text-align:center;
+      position:relative;
+      box-shadow:0 10px 30px rgba(0,0,0,0.3);
+      overflow:hidden;
+    }
+    header::before{
+      content:''; position:absolute; top:0; left:0; right:0; bottom:0;
+      background:linear-gradient(120deg, transparent, rgba(255,255,255,0.15), transparent);
+      animation:shine 8s infinite linear;
+    }
+    @keyframes shine{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+    
+    header h1{
+      font-size:29px;
+      font-weight:800;
+      letter-spacing:1px;
+      margin-left: 70px;
+    }
+
+    .clean-back-btn {
+      position: fixed;
+      top: 18px;
+      left: 16px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(15px);
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.35s ease;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      user-select: none;
+    }
+
+    .clean-back-btn:hover {
+      background: rgba(255, 255, 255, 0.35);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .clean-back-btn svg {
+      width: 22px;
+      height: 22px;
+      transition: transform 0.3s ease;
+    }
+
+    .clean-back-btn:hover svg {
+      transform: translateX(-6px);
+    }
+
+    .container{max-width:600px;margin:80px auto 20px;padding:0 20px;}
+
+    .notif{
+      background:rgba(255,255,255,0.45);
+      backdrop-filter:blur(15px);
+      border:1px solid rgba(0,191,165,0.3);
+      border-radius:20px;
+      padding:22px 20px;
+      margin:18px 0;
+      box-shadow:0 12px 35px rgba(0,0,0,0.15);
+      opacity:0;
+      transform:translateY(40px);
+      transition:all 0.7s ease;
+    }
+    .notif.show{opacity:1;transform:translateY(0);}
+    .notif b{color:#004d40;font-size:20px;font-weight:700;display:block;margin-bottom:10px;}
+    .notif p{color:#1e1e1e;font-size:16px;line-height:1.6;}
+    .notif small{color:#00695c;font-size:13.5px;opacity:0.9;font-weight:500;}
+
+    .show-more{text-align:center;margin:40px 0 60px;}
+    .show-more-btn{
+      background:linear-gradient(45deg,#00bfa5,#00897b);
+      color:white;border:none;padding:16px 50px;font-size:17px;font-weight:600;
+      border-radius:50px;cursor:pointer;box-shadow:0 10px 30px rgba(0,191,165,0.4);
+      transition:all 0.4s ease;backdrop-filter:blur(10px);min-width:200px;
+    }
+    .show-more-btn:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(0,191,165,0.6);}
+    .show-more-btn:disabled{opacity:0.7;cursor:not-allowed;transform:none;}
+
+    .empty{text-align:center;padding:120px 20px;color:#004d40;font-size:19px;font-weight:500;}
+    .empty img{width:110px;opacity:0.6;margin-bottom:20px;}
+  </style>
+</head>
+<body>
+
+  <div class="clean-back-btn" onclick="window.location.href = 'index.html'">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 12H5M12 19l-7-7 7-7"/>
+    </svg>
+    <span>Back</span>
+  </div>
+
+  <header>
+    <h1>Notifications</h1>
+  </header>
+
+  <div class="container">
+    <div id="list">
+      <div class="empty" id="loadingScreen">
+        <img src="https://via.placeholder.com/150/00bfa5/ffffff?text=Bell" alt="Bell">
+        <p>Loading your notifications...</p>
+      </div>
+    </div>
+
+    <div class="show-more" id="showMoreContainer" style="display:none;">
+      <button class="show-more-btn" id="showMoreBtn">Show More</button>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAkcBlyH2QPPZtGN5t9eqYmuQ_E9dGo4b0",
+      authDomain: "fir-bf6f1.firebaseapp.com",
+      databaseURL: "https://fir-bf6f1-default-rtdb.firebaseio.com",
+      projectId: "fir-bf6f1",
+      storageBucket: "fir-bf6f1.firebasestorage.app",
+      messagingSenderId: "432545170995",
+      appId: "1:432545170995:web:b6deccf31b79eb6ef1c546"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const list = document.getElementById("list");
+    const loadingScreen = document.getElementById("loadingScreen");
+    const showMoreContainer = document.getElementById("showMoreContainer");
+    const showMoreBtn = document.getElementById("showMoreBtn");
+
+    let allNotifications = [];
+    let displayed = 0;
+    const PER_PAGE = 10;
+    const CACHE_KEY = "cached_notifications_v2";
+    const paths = ["notifications", "admin/notifications", "announcements"];
+
+    // Step 1: Pehle localStorage se cached data lo (turant dikhega)
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+      allNotifications = JSON.parse(cached);
+      setTimeout(() => {
+        loadingScreen.remove();
+        displayNotifications();
+      }, 800); // Sirf 0.8 second loading feel
+    } else {
+      // Agar cache nahi to 1 second loading
+      setTimeout(() => loadingScreen.remove(), 1000);
+    }
+
+    // Step 2: Background mein fresh data fetch karo aur cache update karo
+    let loaded = 0;
+    paths.forEach(p => {
+      db.ref(p).limitToLast(500).once("value", snap => {
+        const map = {};
+        snap.forEach(child => {
+          if (!map[child.key]) map[child.key] = {key: child.key, ...child.val()};
+        });
+        Object.values(map).forEach(n => {
+          // Duplicate nahi aane denge
+          if (!allNotifications.find(x => x.key === n.key)) {
+            allNotifications.push(n);
+          }
+        });
+        loaded++;
+        if (loaded === paths.length) {
+          finalizeAndCache();
+        }
+      }).catch(() => {
+        loaded++;
+        if (loaded === paths.length) finalizeAndCache();
+      });
+    });
+
+    function finalizeAndCache() {
+      allNotifications.sort((a,b) => (b.timestamp || b.time || 0) - (a.timestamp || a.time || 0));
+      
+      // Cache update kar do next time ke liye
+      localStorage.setItem(CACHE_KEY, JSON.stringify(allNotifications));
+
+      // Agar pehle se show nahi ho raha to ab dikhao
+      if (document.body.contains(loadingScreen)) {
+        loadingScreen.remove();
+      }
+      if (displayed === 0) {
+        displayNotifications();
+      }
+    }
+
+    function displayNotifications() {
+      list.innerHTML = "";
+
+      if (allNotifications.length === 0) {
+        list.innerHTML = `<div class="empty">
+          <img src="https://via.placeholder.com/150/00bfa5/ffffff?text=Bell" alt="Bell">
+          <p>No notifications yet</p>
+        </div>`;
+        return;
+      }
+
+      const batch = allNotifications.slice(0, PER_PAGE);
+      batch.forEach((n, i) => {
+        const div = document.createElement("div");
+        div.className = "notif";
+        div.innerHTML = `<b>${n.title || "Update"}</b>
+                         <p>${n.message || n.body || "New update"}</p>
+                         <small>${format(n.timestamp || n.time)}</small>`;
+        list.appendChild(div);
+        setTimeout(() => div.classList.add("show"), 80 + i * 100);
+      });
+
+      displayed = PER_PAGE;
+      showMoreContainer.style.display = displayed < allNotifications.length ? "block" : "none";
+    }
+
+    function loadMore() {
+      const batch = allNotifications.slice(displayed, displayed + PER_PAGE);
+      batch.forEach((n, i) => {
+        const div = document.createElement("div");
+        div.className = "notif";
+        div.innerHTML = `<b>${n.title || "Update"}</b>
+                         <p>${n.message || n.body || "New update"}</p>
+                         <small>${format(n.timestamp || n.time)}</small>`;
+        list.appendChild(div);
+        setTimeout(() => div.classList.add("show"), 50 + i * 90);
+      });
+      displayed += batch.length;
+      showMoreContainer.style.display = displayed < allNotifications.length ? "block" : "none";
+    }
+
+    function format(ts) {
+      if (!ts) return "Just now";
+      const d = new Date(ts), n = Date.now(), diff = n - d;
+      if (diff < 6e4) return "Just now";
+      if (diff < 36e5) return Math.floor(diff/6e4) + " min ago";
+      if (diff < 864e5) return Math.floor(diff/36e5) + " hours ago";
+      return d.toLocaleDateString("en-IN") + " at " + d.toLocaleTimeString("en-IN", {hour:'2-digit', minute:'2-digit'});
+    }
+
+    showMoreBtn.onclick = () => {
+      showMoreBtn.textContent = "Loading...";
+      showMoreBtn.disabled = true;
+      setTimeout(() => {
+        loadMore();
+        showMoreBtn.textContent = "Show More";
+        showMoreBtn.disabled = false;
+      }, 500);
+    };
+
+    if (Notification.permission === "default") Notification.requestPermission();
+  </script>
+</body>
+</html>
